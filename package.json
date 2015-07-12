@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "guid": "0.0.12",
-    "node-amqp": "git+https://bitbucket.org/LightningCart/node-amqp.git",
-    "amqp": "git+https://bitbucket.org/LightningCart/amqp-boilerplate.git"
+    "node-amqp": "git+https://github.com/postwait/node-amqp",
+    "amqp": "git+https://github.com/HoS0/node-amqp.git"
   }
 }
