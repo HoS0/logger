@@ -42,58 +42,6 @@ var SendFailResponceBack = function (message, reason) {
 
 var ValidateRetrievePayload = function (message, payload) {
     
-    if (!payload.severity) {
-        try {
-            
-            var isValid = true;
-            
-            payload.severity.forEach(function (ser) {
-                if (ser.trim() === '') {
-                    isValid = false;
-                }
-            });
-            
-            if (!isValid) {
-                
-                log('warning', 'Message recieved from: ' + message.sender + ' with wrong severities');
-                SendFailResponceBack(message, 'incorrect severities, it should be array of string');
-                
-                return false;
-            }
-        } catch (e) {
-            
-            log('warning', 'Message recieved from: ' + message.sender + ' with bad severities');
-            SendFailResponceBack(message, 'severities should be array of string');
-            return false;
-        }
-    }
-    
-    if (!payload.service) {
-        try {
-
-            var isValid = true;
-
-            //payload.service.forEach(function(ser) {
-            //    if (ser.trim() === '') {                                       
-            //        isValid = false;
-            //    }    
-            //});
-
-            //if (!isValid) {
-
-            //    log('warning', 'Message recieved from: ' + message.sender + ' with wrong service names');
-            //    SendFailResponceBack(message, 'incorrect service names, it should be array of string');
-
-            //    return false;
-            //}
-        } catch (e) {
-            
-            log('warning', 'Message recieved from: ' + message.sender + ' with bad service names');
-            SendFailResponceBack(message, 'service name should be array of string');
-            return false;
-        }
-    }
-    
     return true;
 }
 
@@ -208,14 +156,14 @@ amqp.CreateRequestQueue(name, function (message) {
                     error: res.error
                 }
 
-                amqp.SendMessage(sender, response);
-                console.log(res.error);
+                // amqp.SendMessage(sender, response);
+                // console.log(res.error);
             } else {
                 res.id = recieverMessageId;
                 res.responceNeeded = false;
                 
-                amqp.SendMessage(sender, res);
-                console.log('okay' + res.payload);
+                // amqp.SendMessage(sender, res);
+                // console.log('okay' + res.payload);
             }
         });
     }
@@ -225,26 +173,10 @@ amqp.CreateRequestQueue(name, function (message) {
         console.log('Retrieving log for ' + "---" + message.sender);
         message.responceNeeded = true;
         
-        amqp.SendMessage(DataManager, message, function (res) {
-            
-            if (res.error !== 0) {
-                
-                var response = {
-                    id: message.id,
-                    responceNeeded: false,
-                    error: res.error
-                }
-                
-                amqp.SendMessage(sender, response);
-                console.log(res.error);
-            } else {
-
-                res.id = recieverMessageId;
-                res.responceNeeded = false;
-
-                amqp.SendMessage(sender, res);
-                //console.log('okay' + res.payload);
-            }
+        amqp.SendMessage(DataManager, message, function (res) {            
+            res.id = recieverMessageId;
+            res.responceNeeded = false;
+            amqp.SendMessage(sender, res);
         });
     }
     
